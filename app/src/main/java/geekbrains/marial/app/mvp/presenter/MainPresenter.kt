@@ -1,6 +1,5 @@
 package geekbrains.marial.app.mvp.presenter
 
-import geekbrains.marial.app.R
 import geekbrains.marial.app.mvp.model.CountersModel
 import geekbrains.marial.app.mvp.view.MainView
 
@@ -8,22 +7,9 @@ class MainPresenter(val view: MainView) {
 
     val model = CountersModel()
 
-    fun counterClick(id: Int) {
-        when(id) {
-            R.id.btn_counter1 -> {
-                val nextValue = model.next(0)
-                view.setButtonText(0, nextValue.toString())
-            }
+    fun counterClick(index: Int) {
+        val nextValue = model.next(index)
+        view.setButtonText(index, nextValue.toString())
 
-            R.id.btn_counter2 -> {
-                val nextValue = model.next(1)
-                view.setButtonText(1, nextValue.toString())
-            }
-
-            R.id.btn_counter3 -> {
-                val nextValue = model.next(2)
-                view.setButtonText(2, nextValue.toString())
-            }
-        }
     }
 }

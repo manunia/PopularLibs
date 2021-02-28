@@ -16,13 +16,16 @@ class MainActivity : AppCompatActivity(), MainView {
         super.onCreate(savedInstanceState)
         vb = ActivityMainBinding.inflate(layoutInflater)
         setContentView(vb?.root)
-
-        val listener = View.OnClickListener {
-            presenter.counterClick(it.id)
-        }
-        vb?.btnCounter1?.setOnClickListener(listener)
-        vb?.btnCounter2?.setOnClickListener(listener)
-        vb?.btnCounter3?.setOnClickListener(listener)
+        
+        vb?.btnCounter1?.setOnClickListener(View.OnClickListener {
+            presenter.counterClick(0)
+        })
+        vb?.btnCounter2?.setOnClickListener(View.OnClickListener {
+            presenter.counterClick(1)
+        })
+        vb?.btnCounter3?.setOnClickListener(View.OnClickListener {
+            presenter.counterClick(2)
+        })
     }
 
     override fun setButtonText(index: Int, text: String) {
