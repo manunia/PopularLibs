@@ -1,24 +1,15 @@
 package geekbrains.marial.app.mvp.presenter
 
-import geekbrains.marial.app.mvp.model.CountersModel
+import com.github.terrakok.cicerone.Router
+import geekbrains.marial.app.mvp.navigation.IScreens
 import geekbrains.marial.app.mvp.view.MainView
+import moxy.MvpPresenter
 
-class MainPresenter(val view: MainView) {
+class MainPresenter(val router: Router, val screens: IScreens) : MvpPresenter<MainView>() {
 
-    val model = CountersModel()
-
-    fun counterBtn1Click() {
-        val nextValue = model.next(0)
-        view.setButton1Text(nextValue.toString())
+    override fun onFirstViewAttach() {
+        super.onFirstViewAttach()
+        router.replaceScreen(screens.users())
     }
 
-    fun counterBtn2Click() {
-        val nextValue = model.next(1)
-        view.setButton2Text(nextValue.toString())
-    }
-
-    fun counterBtn3Click() {
-        val nextValue = model.next(2)
-        view.setButton3Text(nextValue.toString())
-    }
 }
