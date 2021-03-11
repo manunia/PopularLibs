@@ -4,35 +4,36 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import geekbrains.marial.app.databinding.FragmentOneUserBinding
 import geekbrains.marial.app.databinding.FragmentUsersBinding
 import geekbrains.marial.app.mvp.model.GitHubUsersRepo
+import geekbrains.marial.app.mvp.presenter.OneUserPresenter
 import geekbrains.marial.app.mvp.presenter.UsersPresenter
+import geekbrains.marial.app.mvp.view.OneUserView
 import geekbrains.marial.app.mvp.view.UsersView
 import geekbrains.marial.app.ui.App
 import geekbrains.marial.app.ui.BackClickListener
 import geekbrains.marial.app.ui.adapter.UsersRVAdapter
-import geekbrains.marial.app.ui.navigation.AndroidScreens
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
-class UsersFragment : MvpAppCompatFragment(), UsersView, BackClickListener {
+class OneUserFragment : MvpAppCompatFragment(), OneUserView, BackClickListener {
 
     companion object {
-        fun newInstance() = UsersFragment()
+        fun newInstance() = OneUserFragment()
     }
 
     private val presenter by moxyPresenter {
-        UsersPresenter(GitHubUsersRepo(), App.instance.router, AndroidScreens())
+        OneUserPresenter(GitHubUsersRepo(), App.instance.router)
     }
 
-    private var vb: FragmentUsersBinding? = null
-    private var adapter: UsersRVAdapter? = null
+    private var vb: FragmentOneUserBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ) = FragmentUsersBinding.inflate(inflater, container, false).also {
+    ) = FragmentOneUserBinding.inflate(inflater, container, false).also {
         vb = it
     }.root
 
@@ -42,13 +43,7 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackClickListener {
     }
 
     override fun init() {
-        vb?.rvUsers?.layoutManager = LinearLayoutManager(requireContext())
-        adapter = UsersRVAdapter(presenter.usersListPresenter)
-        vb?.rvUsers?.adapter = adapter
-    }
-
-    override fun updateList() {
-        adapter?.notifyDataSetChanged()
+        vb?.tvUserLogin?.text = "test"
     }
 
     override fun backPressed() = presenter.backClick()

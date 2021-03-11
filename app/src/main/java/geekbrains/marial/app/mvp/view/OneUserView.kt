@@ -4,7 +4,6 @@ import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
 
 @AddToEndSingle
-interface UsersView: MvpView {
+interface OneUserView: MvpView {
     fun init()
-    fun updateList()
 }

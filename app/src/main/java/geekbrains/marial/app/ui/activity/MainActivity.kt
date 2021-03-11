@@ -8,6 +8,7 @@ import geekbrains.marial.app.mvp.model.GitHubUsersRepo
 import geekbrains.marial.app.mvp.presenter.MainPresenter
 import geekbrains.marial.app.mvp.view.MainView
 import geekbrains.marial.app.ui.App
+import geekbrains.marial.app.ui.BackClickListener
 import geekbrains.marial.app.ui.adapter.UsersRVAdapter
 import geekbrains.marial.app.ui.navigation.AndroidScreens
 import moxy.MvpAppCompatActivity
@@ -38,6 +39,15 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     override fun onPause() {
         super.onPause()
         App.instance.navigatorHolder.removeNavigator()
+    }
+
+    override fun onBackPressed() {
+        supportFragmentManager.fragments.forEach {
+            if (it is BackClickListener && it.backPressed()) {
+                return
+            }
+        }
+        presenter.backClicked()
     }
 
 }

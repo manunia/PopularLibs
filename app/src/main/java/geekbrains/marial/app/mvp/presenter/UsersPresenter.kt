@@ -3,12 +3,13 @@ package geekbrains.marial.app.mvp.presenter
 import com.github.terrakok.cicerone.Router
 import geekbrains.marial.app.mvp.model.GitHubUsersRepo
 import geekbrains.marial.app.mvp.model.entity.GithubUser
+import geekbrains.marial.app.mvp.navigation.IScreens
 import geekbrains.marial.app.mvp.presenter.list.IUsersListPresenter
-import geekbrains.marial.app.mvp.view.MainView
+import geekbrains.marial.app.mvp.view.UsersView
 import geekbrains.marial.app.mvp.view.list.IUserItemView
 import moxy.MvpPresenter
 
-class UsersPresenter(val repo: GitHubUsersRepo, val router: Router): MvpPresenter<MainView>() {
+class UsersPresenter(val repo: GitHubUsersRepo, val router: Router, val screens: IScreens) : MvpPresenter<UsersView>() {
 
     class UsersListPresenter : IUsersListPresenter {
         val users = mutableListOf<GithubUser>()
@@ -32,6 +33,7 @@ class UsersPresenter(val repo: GitHubUsersRepo, val router: Router): MvpPresente
 
         usersListPresenter.itemClickListener = { view ->
             val user = usersListPresenter.users[view.pos]
+            router.navigateTo(screens.oneUser(user))
         }
 
     }
