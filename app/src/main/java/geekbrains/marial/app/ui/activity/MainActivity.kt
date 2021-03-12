@@ -1,42 +1,53 @@
 package geekbrains.marial.app.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
+import com.github.terrakok.cicerone.androidx.AppNavigator
+import geekbrains.marial.app.R
 import geekbrains.marial.app.databinding.ActivityMainBinding
+import geekbrains.marial.app.mvp.model.GitHubUsersRepo
 import geekbrains.marial.app.mvp.presenter.MainPresenter
 import geekbrains.marial.app.mvp.view.MainView
+import geekbrains.marial.app.ui.App
+import geekbrains.marial.app.ui.BackClickListener
+import geekbrains.marial.app.ui.adapter.UsersRVAdapter
+import geekbrains.marial.app.ui.navigation.AndroidScreens
+import moxy.MvpAppCompatActivity
+import moxy.ktx.moxyPresenter
 
-class MainActivity : AppCompatActivity(), MainView {
+class MainActivity : MvpAppCompatActivity(), MainView {
+
+    val navigator = AppNavigator(this, R.id.container)
 
     private var vb: ActivityMainBinding? = null
-    val presenter = MainPresenter(this)
+    private val presenter by moxyPresenter {
+        MainPresenter(App.instance.router, AndroidScreens())
+    }
+
+    private var adapter: UsersRVAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         vb = ActivityMainBinding.inflate(layoutInflater)
         setContentView(vb?.root)
-        
-        vb?.btnCounter1?.setOnClickListener(View.OnClickListener {
-            presenter.counterBtn1Click()
-        })
-        vb?.btnCounter2?.setOnClickListener(View.OnClickListener {
-            presenter.counterBtn2Click()
-        })
-        vb?.btnCounter3?.setOnClickListener(View.OnClickListener {
-            presenter.counterBtn3Click()
-        })
     }
 
-    override fun setButton1Text(text: String) {
-        vb?.btnCounter1?.text = text
+    override fun onResumeFragments() {
+        super.onResumeFragments()
+        App.instance.navigatorHolder.setNavigator(navigator)
     }
 
-    override fun setButton2Text(text: String) {
-        vb?.btnCounter2?.text = text
+    override fun onPause() {
+        super.onPause()
+        App.instance.navigatorHolder.removeNavigator()
     }
 
-    override fun setButton3Text(text: String) {
-        vb?.btnCounter3?.text = text
+    override fun onBackPressed() {
+        supportFragmentManager.fragments.forEach {
+            if (it is BackClickListener && it.backPressed()) {
+                return
+            }
+        }
+        presenter.backClicked()
     }
+
 }
