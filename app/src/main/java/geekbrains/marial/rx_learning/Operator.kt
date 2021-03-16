@@ -1,13 +1,8 @@
 package geekbrains.marial.rx_learning
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Observer
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.functions.Function4
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.schedulers.TestScheduler
-import java.lang.RuntimeException
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
@@ -52,7 +47,8 @@ class Operator {
 
         fun exec() {
             //execMap()
-            execFlatMap()
+            //execFlatMap()//onNext: [3x, 2x, 1x, 6x, 5x, 7x]
+            execSwitchMap()//onNext: [7switch]
         }
 
         fun execMap() {
@@ -144,12 +140,29 @@ class Operator {
                 }, {
                     println("onError: ${it.message}")
                 })
+            testScheduler.advanceTimeBy(1,TimeUnit.MINUTES)
 //            Observable.just(listOf("1","2","3"))
 //                .flatMap{ list ->
 //                    Observable.fromIterable(list)
 //                }.subscribe{
 //
 //                }
+        }
+
+        fun execSwitchMap() {
+            val testScheduler = TestScheduler()
+            producer.just()
+                .switchMap {
+                    val delay = Random.nextInt(10).toLong()
+                    return@switchMap Observable.just(it + "switch").delay(delay,TimeUnit.SECONDS,testScheduler)
+                }
+                .toList()
+                .subscribe({ s->
+                    println("onNext: $s")
+                }, {
+                    println("onError: ${it.message}")
+                })
+            testScheduler.advanceTimeBy(1,TimeUnit.MINUTES)
         }
     }
 }

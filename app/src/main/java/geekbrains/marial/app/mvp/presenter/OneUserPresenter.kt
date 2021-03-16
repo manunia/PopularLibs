@@ -14,11 +14,6 @@ class OneUserPresenter(val repo: GitHubUsersRepo, val router: Router) : MvpPrese
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         viewState.init()
-        loadData()
-    }
-
-    fun loadData() {
-        val user = repo.getUsers().get(1)
     }
 
     fun backClick(): Boolean {
