@@ -2,6 +2,7 @@ package geekbrains.marial.app.mvp.model
 
 import geekbrains.marial.app.mvp.model.entity.GithubUser
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class GitHubUsersRepo {
     private val users = listOf(
@@ -14,7 +15,8 @@ class GitHubUsersRepo {
         GithubUser("login7")
     )
 
-    fun getUsers(): Observable<GithubUser> {
-        return Observable.fromIterable(users)
-    }
+    fun getUsers() = Observable.fromCallable {
+        users
+    }.subscribeOn(Schedulers.io())
+
 }

@@ -7,9 +7,17 @@ import geekbrains.marial.app.mvp.navigation.IScreens
 import geekbrains.marial.app.mvp.presenter.list.IUsersListPresenter
 import geekbrains.marial.app.mvp.view.UsersView
 import geekbrains.marial.app.mvp.view.list.IUserItemView
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import moxy.MvpPresenter
 
-class UsersPresenter(val repo: GitHubUsersRepo, val router: Router, val screens: IScreens) : MvpPresenter<UsersView>() {
+class UsersPresenter(
+    val repo: GitHubUsersRepo,
+    val router: Router,
+    val screens: IScreens,
+    val uiScheduler: Scheduler
+) :
+    MvpPresenter<UsersView>() {
 
     class UsersListPresenter : IUsersListPresenter {
         val users = mutableListOf<GithubUser>()
@@ -24,6 +32,7 @@ class UsersPresenter(val repo: GitHubUsersRepo, val router: Router, val screens:
 
     }
 
+    val compositeDisposable = CompositeDisposable()
     val usersListPresenter = UsersListPresenter()
 
     override fun onFirstViewAttach() {
@@ -39,11 +48,15 @@ class UsersPresenter(val repo: GitHubUsersRepo, val router: Router, val screens:
     }
 
     fun loadData() {
-        val users = repo.getUsers().subscribe{
-            println(it)
-            usersListPresenter.users.add(it)
-        }
-        //usersListPresenter.users.addAll(users)
+        val disposable = repo.getUsers()
+            .observeOn(uiScheduler)
+            .subscribe({
+                usersListPresenter.users.addAll(it)
+                viewState.updateList()
+            }, {
+                it.printStackTrace()
+            })
+        compositeDisposable.add(disposable)
         viewState.updateList()
     }
 
@@ -52,4 +65,8 @@ class UsersPresenter(val repo: GitHubUsersRepo, val router: Router, val screens:
         return true
     }
 
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
+    }
 }

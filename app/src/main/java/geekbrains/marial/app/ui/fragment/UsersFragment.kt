@@ -12,6 +12,7 @@ import geekbrains.marial.app.ui.App
 import geekbrains.marial.app.ui.BackClickListener
 import geekbrains.marial.app.ui.adapter.UsersRVAdapter
 import geekbrains.marial.app.ui.navigation.AndroidScreens
+import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -22,7 +23,7 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackClickListener {
     }
 
     private val presenter by moxyPresenter {
-        UsersPresenter(GitHubUsersRepo(), App.instance.router, AndroidScreens())
+        UsersPresenter(GitHubUsersRepo(), App.instance.router, AndroidScreens(), Schedulers.io())
     }
 
     private var vb: FragmentUsersBinding? = null
