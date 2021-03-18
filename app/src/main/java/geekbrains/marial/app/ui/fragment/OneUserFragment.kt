@@ -26,7 +26,7 @@ class OneUserFragment() : MvpAppCompatFragment(), OneUserView, BackClickListener
 
     private val presenter by moxyPresenter {
         val user = arguments?.getParcelable<GithubUser>(USER) as GithubUser
-        OneUserPresenter(GitHubUsersRepo(), App.instance.router, user)
+        OneUserPresenter(App.instance.router, user)
     }
 
     private var vb: FragmentOneUserBinding? = null
