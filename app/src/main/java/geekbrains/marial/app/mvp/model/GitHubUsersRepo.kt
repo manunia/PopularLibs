@@ -1,6 +1,7 @@
 package geekbrains.marial.app.mvp.model
 
 import geekbrains.marial.app.mvp.model.entity.GithubUser
+import io.reactivex.rxjava3.core.Observable
 
 class GitHubUsersRepo {
     private val users = listOf(
@@ -13,7 +14,7 @@ class GitHubUsersRepo {
         GithubUser("login7")
     )
 
-    fun getUsers(): List<GithubUser> {
-        return users;
+    fun getUsers(): Observable<GithubUser> {
+        return Observable.fromIterable(users)
     }
 }
