@@ -9,17 +9,13 @@ import geekbrains.marial.app.mvp.view.UsersView
 import geekbrains.marial.app.mvp.view.list.IUserItemView
 import moxy.MvpPresenter
 
-class OneUserPresenter(val repo: GitHubUsersRepo, val router: Router) : MvpPresenter<OneUserView>() {
+class OneUserPresenter(val repo: GitHubUsersRepo, val router: Router, val user: GithubUser) : MvpPresenter<OneUserView>() {
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         viewState.init()
-        loadData()
     }
 
-    fun loadData() {
-        val user = repo.getUsers().get(1)
-    }
 
     fun backClick(): Boolean {
         router.exit()

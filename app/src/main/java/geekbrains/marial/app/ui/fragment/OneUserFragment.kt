@@ -13,14 +13,20 @@ import geekbrains.marial.app.ui.BackClickListener
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
-class OneUserFragment(val user1: GithubUser) : MvpAppCompatFragment(), OneUserView, BackClickListener {
+class OneUserFragment() : MvpAppCompatFragment(), OneUserView, BackClickListener {
 
     companion object {
-        fun newInstance(user: GithubUser) = OneUserFragment(user1 = user)
+        private const val USER = "user"
+        fun newInstance(user: GithubUser) = OneUserFragment().apply {
+            arguments = Bundle().apply {
+                putParcelable(USER, user)
+            }
+        }
     }
 
     private val presenter by moxyPresenter {
-        OneUserPresenter(GitHubUsersRepo(), App.instance.router)
+        val user = arguments?.getParcelable<GithubUser>(USER) as GithubUser
+        OneUserPresenter(GitHubUsersRepo(), App.instance.router, user)
     }
 
     private var vb: FragmentOneUserBinding? = null
@@ -38,8 +44,8 @@ class OneUserFragment(val user1: GithubUser) : MvpAppCompatFragment(), OneUserVi
         vb = null
     }
 
-    override fun init() {
-        vb?.tvUserLogin?.text = user1.login
+    override fun init(login: String) {
+        vb?.tvUserLogin?.text = login
     }
 
     override fun backPressed() = presenter.backClick()
