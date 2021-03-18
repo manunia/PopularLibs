@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import geekbrains.marial.app.databinding.FragmentOneUserBinding
-import geekbrains.marial.app.mvp.model.GitHubUsersRepo
 import geekbrains.marial.app.mvp.model.entity.GithubUser
 import geekbrains.marial.app.mvp.presenter.OneUserPresenter
 import geekbrains.marial.app.mvp.view.OneUserView

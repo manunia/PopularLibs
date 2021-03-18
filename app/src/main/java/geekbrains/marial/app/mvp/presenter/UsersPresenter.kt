@@ -1,15 +1,21 @@
 package geekbrains.marial.app.mvp.presenter
 
 import com.github.terrakok.cicerone.Router
-import geekbrains.marial.app.mvp.model.GitHubUsersRepo
 import geekbrains.marial.app.mvp.model.entity.GithubUser
+import geekbrains.marial.app.mvp.model.repo.IGithubUsersRepo
 import geekbrains.marial.app.mvp.navigation.IScreens
 import geekbrains.marial.app.mvp.presenter.list.IUsersListPresenter
 import geekbrains.marial.app.mvp.view.UsersView
 import geekbrains.marial.app.mvp.view.list.IUserItemView
+import io.reactivex.rxjava3.core.Scheduler
 import moxy.MvpPresenter
 
-class UsersPresenter(val repo: GitHubUsersRepo, val router: Router, val screens: IScreens) : MvpPresenter<UsersView>() {
+class UsersPresenter(
+    val uiSheduler: Scheduler,
+    val repo: IGithubUsersRepo,
+    val router: Router,
+    val screens: IScreens
+) : MvpPresenter<UsersView>() {
 
     class UsersListPresenter : IUsersListPresenter {
         val users = mutableListOf<GithubUser>()
@@ -18,6 +24,7 @@ class UsersPresenter(val repo: GitHubUsersRepo, val router: Router, val screens:
         override fun bindView(view: IUserItemView) {
             val user = users[view.pos]
             view.setLogin(user.login)
+            view.loadAvatar(user.avatarUrl)
         }
 
         override fun getCount() = users.size
@@ -39,12 +46,16 @@ class UsersPresenter(val repo: GitHubUsersRepo, val router: Router, val screens:
     }
 
     fun loadData() {
-        val users = repo.getUsers().subscribe{
-            println(it)
-            usersListPresenter.users.add(it)
-        }
-        //usersListPresenter.users.addAll(users)
-        viewState.updateList()
+        repo.getUsers()
+            .observeOn(uiSheduler)
+            .subscribe({ repos ->
+                usersListPresenter.users.clear()
+                usersListPresenter.users.addAll(repos)
+                viewState.updateList()
+            }, {
+                println("Error: ${it.printStackTrace()}")
+            })
+
     }
 
     fun backClick(): Boolean {

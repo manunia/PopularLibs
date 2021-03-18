@@ -4,7 +4,6 @@ import android.os.Bundle
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import geekbrains.marial.app.R
 import geekbrains.marial.app.databinding.ActivityMainBinding
-import geekbrains.marial.app.mvp.model.GitHubUsersRepo
 import geekbrains.marial.app.mvp.presenter.MainPresenter
 import geekbrains.marial.app.mvp.view.MainView
 import geekbrains.marial.app.ui.App

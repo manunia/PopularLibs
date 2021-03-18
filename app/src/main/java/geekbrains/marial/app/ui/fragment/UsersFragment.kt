@@ -5,13 +5,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import geekbrains.marial.app.databinding.FragmentUsersBinding
-import geekbrains.marial.app.mvp.model.GitHubUsersRepo
+import geekbrains.marial.app.mvp.model.api.ApiHolder
+import geekbrains.marial.app.mvp.model.repo.RetrofitGitHubUsersRepo
 import geekbrains.marial.app.mvp.presenter.UsersPresenter
 import geekbrains.marial.app.mvp.view.UsersView
 import geekbrains.marial.app.ui.App
 import geekbrains.marial.app.ui.BackClickListener
 import geekbrains.marial.app.ui.adapter.UsersRVAdapter
+import geekbrains.marial.app.ui.image.GlideImageLoader
 import geekbrains.marial.app.ui.navigation.AndroidScreens
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -22,7 +25,10 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackClickListener {
     }
 
     private val presenter by moxyPresenter {
-        UsersPresenter(GitHubUsersRepo(), App.instance.router, AndroidScreens())
+        UsersPresenter(AndroidSchedulers.mainThread(),
+            RetrofitGitHubUsersRepo(ApiHolder.api),
+            App.instance.router,
+            AndroidScreens())
     }
 
     private var vb: FragmentUsersBinding? = null
@@ -43,7 +49,7 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackClickListener {
 
     override fun init() {
         vb?.rvUsers?.layoutManager = LinearLayoutManager(requireContext())
-        adapter = UsersRVAdapter(presenter.usersListPresenter)
+        adapter = UsersRVAdapter(presenter.usersListPresenter, GlideImageLoader())
         vb?.rvUsers?.adapter = adapter
     }
 
